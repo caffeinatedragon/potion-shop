@@ -68,7 +68,7 @@ $ docker run -it --rm --name run-potion-shop -p 8000:8000 potion-shop
 
 2. Install the project package as editable:
   ```shell
-  $ pip3 install -e potion-shop/potion_shop
+  $ pip3 install -e potion-shop/
   ```
 
 3. Run Project
@@ -81,14 +81,15 @@ If everything works, you should see the following in your terminal after buildin
 ```
 Starting setup for postgres database...
 Connecting to DB...
-Initialized DB
+Connected!
 DB Configured successfully
 Logging Level set to: INFO
 Initialized Logging Table
-[2020-09-17 15:22:58 -0700] [27149] [INFO] Starting gunicorn 20.0.4
-[2020-09-17 15:22:58 -0700] [27149] [INFO] Listening at: http://0.0.0.0:8000 (27149)
-[2020-09-17 15:22:58 -0700] [27149] [INFO] Using worker: sync
-[2020-09-17 15:22:58 -0700] [27154] [INFO] Booting worker with pid: 27154
+<Log: 09/24/2020-17:13:13 - STARTUP: Logging configured successfully>
+[2020-09-24 17:13:13 -0700] [35683] [INFO] Starting gunicorn 20.0.4
+[2020-09-24 17:13:13 -0700] [35683] [INFO] Listening at: http://0.0.0.0:8000 (35683)
+[2020-09-24 17:13:13 -0700] [35683] [INFO] Using worker: sync
+[2020-09-24 17:13:13 -0700] [35687] [INFO] Booting worker with pid: 35687
 
 ```
 **Note:** Your date and pid number will differ from the example given here.
@@ -119,24 +120,25 @@ $ python3 -m pytest potion-shop/tests
 
 Expected Output:
 ```shell
-================================= test session starts =================================
+============================= test session starts ==============================
 platform darwin -- Python 3.8.5, pytest-6.0.2, py-1.9.0, pluggy-0.13.1
 rootdir: ~/potion-shop/potion-shop/tests, configfile: pytest.ini
 plugins: falcon-client-2.0.1
-collected 115 items                                                                   
+collected 116 items                                                            
 
-potion-shop/tests/test_auth/test_auth_setup.py ...                              [  2%]
-potion-shop/tests/test_auth/test_bad_auth.py .....................              [ 20%]
-potion-shop/tests/test_auth/test_valid_auth.py .......                          [ 26%]
-potion-shop/tests/test_configs/test_db_connection.py ..........                 [ 35%]
-potion-shop/tests/test_configs/test_log_level.py ..                             [ 37%]
-potion-shop/tests/test_database/test_database_operations.py ...                 [ 40%]
-potion-shop/tests/test_database/test_invalid_methods.py ....................... [ 60%]
-................                                                                [ 73%]
-potion-shop/tests/test_potion_utils/test_description.py ......                  [ 79%]
-potion-shop/tests/test_potion_utils/test_search.py ........................     [100%]
+potion-shop/tests/test_auth/test_auth_setup.py ...                       [  2%]
+potion-shop/tests/test_auth/test_bad_auth.py .....................       [ 20%]
+potion-shop/tests/test_auth/test_valid_auth.py .......                   [ 26%]
+potion-shop/tests/test_configs/test_db_connection.py ..........          [ 35%]
+potion-shop/tests/test_configs/test_log_level.py ..                      [ 37%]
+potion-shop/tests/test_database/test_database_operations.py ....         [ 40%]
+potion-shop/tests/test_database/test_invalid_methods.py ................ [ 54%]
+.......................                                                  [ 74%]
+potion-shop/tests/test_potion_utils/test_description.py ......           [ 79%]
+potion-shop/tests/test_potion_utils/test_search.py ..................... [ 97%]
+...                                                                      [100%]
 
-================================= 115 passed in 8.31s =================================
+============================= 116 passed in 8.23s ==============================
 ```
 **Note:** Your runtime may vary.
 
@@ -176,7 +178,7 @@ potion-shop/potion_shop/__init__.py                        0      0      0      
 potion-shop/potion_shop/application.py                    52      0      2      0   100%
 potion-shop/potion_shop/configuration.py                   9      0      0      0   100%
 potion-shop/potion_shop/database/__init__.py               0      0      0      0   100%
-potion-shop/potion_shop/database/base.py                  13      0      2      0   100%
+potion-shop/potion_shop/database/base.py                  14      0      2      0   100%
 potion-shop/potion_shop/database/db_utils.py              22      0      0      0   100%
 potion-shop/potion_shop/database/flavors.py               12      0      2      0   100%
 potion-shop/potion_shop/database/logging/__init__.py       0      0      0      0   100%
@@ -194,7 +196,7 @@ potion-shop/potion_shop/resources/potion_resource.py      36      0     12      
 potion-shop/potion_shop/utils/__init__.py                  0      0      0      0   100%
 potion-shop/potion_shop/utils/exceptions.py               16      0      0      0   100%
 ----------------------------------------------------------------------------------------
-TOTAL                                                    517      0    106      0   100%
+TOTAL                                                    518      0    106      0   100%
 ```
 
 ##### Known Coverage Issues:

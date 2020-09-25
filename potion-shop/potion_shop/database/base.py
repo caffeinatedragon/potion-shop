@@ -17,7 +17,9 @@ class Base:
         '''
         A method to update the ORM object in the database.
         '''
-        session.query(data_obj).update(to_update)
+        pk = inspect(data_obj).primary_key[0].name
+        session.query(data_obj).filter(
+            getattr(data_obj,pk)==self.to_dict()[pk]).update(to_update)
         return self.to_dict()
 
     def remove(self, session):

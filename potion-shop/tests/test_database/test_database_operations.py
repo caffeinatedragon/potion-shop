@@ -81,6 +81,25 @@ def test_prepopulate_helper(client):
     assert resp.status_code == 200
     assert resp.json['results'] == EMPTY
 
+def test_put_multiple(client):
+    # an error in a previous version of the update code in base.py
+    # would cause all items to be updated instead of only the item
+    # with the given id
+    prepopulate()
+
+    resp = client.get(POTION_TYPE)
+    assert len(resp['results']) == 3
+
+    client.put(f'{POTION_TYPE}/1', headers=valid_token, json={'color':'purple'})
+
+    resp = client.get(POTION_TYPE)
+    assert len(resp['results']) == 3
+
+    colors = set(r['color'] for r in resp['results'])
+    assert set(['purple','blue','green']) == colors
+
+    delete_all()
+
 
 # This is one big test because foreign key constraints
 # require a specific order for creating/deleting items
