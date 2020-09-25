@@ -1,0 +1,17 @@
+gunicorn:
+  bind: 0.0.0.0:8000
+  workers: 1
+  timeout: 30
+swagger:
+  directory: "./static"
+authentication:
+  key: "./config/pytest/test_key.pem"
+  public_key: "./config/pytest/test_public_key.pem"
+logging:
+  level: INFO
+database:
+  use: postgres
+  database: postgres
+  server: localhost
+  username: postgres
+  password: admin

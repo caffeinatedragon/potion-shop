@@ -1,0 +1,734 @@
+openapi: 3.0.0
+info:
+  title: Potion Shop API
+  description: This project is a simple API written using Python's Falcon framework that contains some frequently-used components.
+  version: 0.0.1
+servers:
+  - url: /v1
+
+tags:
+  - name: Potions
+    description: The different types of potions
+  - name: Potion Potency
+    description: How much of a given stat a potion restores
+  - name: Potion Types
+    description: Which stats are affected by potions
+  - name: Potion Inventory
+    description: The amount of each potion available in the shop
+
+paths:
+  /potions:
+    get:
+      summary: Returns all Potions.
+      description: Supports searching based on values in Potions table.
+      tags:
+        - Potions
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - in: query
+          name: id
+          description: Search for all potions with given id
+          schema:
+            type: integer
+            minimum: 1
+          required: false
+        - in: query
+          name: type_id
+          description: Search for all potions with given type_id
+          schema:
+            type: integer
+            minimum: 1
+          required: false
+        - in: query
+          name: potency_id
+          description: Search for all potions with given potency_id
+          schema:
+            type: integer
+            minimum: 1
+          required: false
+      responses:
+          '200':
+            description: OK
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    results:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Potion'
+          '400':
+            description: Invalid Input
+
+    post:
+      summary: Create a new Potion.
+      description: Create a potion by supplying the required fields as JSON. Supports bulk-adding by sending array of potions.
+      tags:
+        - Potions
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: array
+                  items:
+                    $ref: '#/components/schemas/Potion'
+                - $ref: '#/components/schemas/Potion'
+              example:
+                potency_id: 1
+                type_id: 1
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Potion'
+        '400':
+          description: Invalid Input
+        '401':
+          description: Unauthorized
+
+  /potions/{id}:
+    parameters:
+      - $ref: '#/components/parameters/id'
+    get:
+      summary: Get Potion by ID.
+      tags:
+        - Potions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Potion'
+        '400':
+          description: Invalid Input
+        '404':
+          description: Not Found
+
+    put:
+      summary: Update Potion at ID.
+      tags:
+        - Potions
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Potion'
+            example:
+              type_id: 2
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: Invalid Input
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+
+    delete:
+      summary: Delete Potion at ID.
+      tags:
+        - Potions
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: Invalid Input
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+
+  /potions/describe:
+    get:
+      summary: Describes all potions.
+      tags:
+        - Potions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  example: The red Hi-Potion restores 50% of the drinker's Health.
+        '404':
+          description: Not Found
+
+  /potions/describe/{id}:
+    parameters:
+      - $ref: '#/components/parameters/id'
+    get:
+      summary: Describe the potion with the given id.
+      tags:
+        - Potions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: The red Hi-Potion restores 50% of the drinker's Health.
+        '404':
+          description: Not Found
+
+  /potions/potency:
+    get:
+      summary: Returns all Potion Potency.
+      description: Supports searching based on values in Potion Potency table.
+      tags:
+        - Potion Potency
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - in: query
+          name: id
+          description: Search for all potencies with given id
+          schema:
+            type: integer
+            minimum: 1
+          required: false
+        - in: query
+          name: restores
+          description: Search for all potencies with given restores amount
+          schema:
+            type: number
+            minimum: 0
+          required: false
+        - in: query
+          name: prefix
+          description: Search for all potencies with given prefix
+          schema:
+            type: string
+          required: false
+      responses:
+          '200':
+            description: OK
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    results:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/PotionPotency'
+          '400':
+            description: Invalid Input
+
+    post:
+      summary: Create a new Potion Potency.
+      description: Create a potion by supplying the required fields as JSON. Supports bulk-adding by sending array of potions.
+      tags:
+        - Potion Potency
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: array
+                  items:
+                    $ref: '#/components/schemas/PotionPotency'
+                - $ref: '#/components/schemas/PotionPotency'
+              example:
+                restores: 0.5
+                prefix: "Hi-"
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PotionPotency'
+        '400':
+          description: Invalid Input
+        '401':
+          description: Unauthorized
+
+  /potions/potency/{id}:
+    parameters:
+      - $ref: '#/components/parameters/id'
+    get:
+      summary: Get Potion Potency by ID.
+      tags:
+        - Potion Potency
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PotionPotency'
+        '400':
+          description: Invalid Input
+        '404':
+          description: Not Found
+
+    put:
+      summary: Update Potion Potency at ID.
+      tags:
+        - Potion Potency
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PotionPotency'
+            example:
+              restores: 0.6
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: Invalid Input
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+
+    delete:
+      summary: Delete Potion Potency at ID.
+      tags:
+        - Potion Potency
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: Invalid Input
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+
+  /potions/types:
+    get:
+      summary: Returns all Potion Types.
+      description: Supports searching based on values in Potion Types table.
+      tags:
+        - Potion Types
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - in: query
+          name: id
+          description: Search for all potion types with given id
+          schema:
+            type: integer
+            minimum: 1
+          required: false
+        - in: query
+          name: related_stat
+          description: Search for all potion types affecting this stat
+          schema:
+            type: string
+          required: false
+        - in: query
+          name: color
+          description: Search for all potion types with given color
+          schema:
+            type: string
+          required: false
+      responses:
+          '200':
+            description: OK
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    results:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/PotionTypes'
+          '400':
+            description: Invalid Input
+
+    post:
+      summary: Create a new Potion Type.
+      description: Create a potion type by supplying the required fields as JSON. Supports bulk-adding by sending array of potions.
+      tags:
+        - Potion Types
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: array
+                  items:
+                    $ref: '#/components/schemas/PotionTypes'
+                - $ref: '#/components/schemas/PotionTypes'
+              example:
+                related_stat: Health
+                color: red
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PotionTypes'
+        '400':
+          description: Invalid Input
+        '401':
+          description: Unauthorized
+
+  /potions/types/{id}:
+    parameters:
+      - $ref: '#/components/parameters/id'
+    get:
+      summary: Get Potion Type by ID.
+      tags:
+        - Potion Types
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PotionTypes'
+        '400':
+          description: Invalid Input
+        '404':
+          description: Not Found
+
+    put:
+      summary: Update Potion Type at ID.
+      tags:
+        - Potion Types
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PotionTypes'
+            example:
+              color: purple
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: Invalid Input
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+
+    delete:
+      summary: Delete Potion Type at ID.
+      tags:
+        - Potion Types
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: Invalid Input
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+
+
+  /inventory:
+    get:
+      summary: Returns all Potions Inventory items.
+      description: Supports searching based on values in PotionInventory table.
+      tags:
+        - Potion Inventory
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - in: query
+          name: id
+          description: Search for all inventory with given id
+          schema:
+            type: integer
+            minimum: 1
+          required: false
+        - in: query
+          name: potion_id
+          description: Search for all inventory with given potion_id
+          schema:
+            type: integer
+            minimum: 1
+          required: false
+        - in: query
+          name: price
+          description: Search for all inventory with given price
+          schema:
+            type: integer
+            minimum: 1
+          required: false
+        - in: query
+          name: on_sale
+          description: Search for if the potion is on sale
+          schema:
+            type: boolean
+          required: false
+        - in: query
+          name: amount
+          description: Search for all inventory with exact amount
+          schema:
+            type: integer
+            minimum: 0
+          required: false
+      responses:
+          '200':
+            description: OK
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    results:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/PotionInventory'
+          '400':
+            description: Invalid Input
+
+    post:
+      summary: Create a new Potion Inventory.
+      description: Create an inventory record by supplying the required fields as JSON. Supports bulk-adding by sending array of potions.
+      tags:
+        - Potion Inventory
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: array
+                  items:
+                    $ref: '#/components/schemas/PotionInventory'
+                - $ref: '#/components/schemas/PotionInventory'
+              example:
+                potion_id: 1
+                price: 15
+                amount: 10
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PotionInventory'
+        '400':
+          description: Invalid Input
+        '401':
+          description: Unauthorized
+
+  /inventory/{id}:
+    parameters:
+      - $ref: '#/components/parameters/id'
+    get:
+      summary: Get Potion Inventory by ID.
+      tags:
+        - Potion Inventory
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PotionInventory'
+        '400':
+          description: Invalid Input
+        '404':
+          description: Not Found
+
+    put:
+      summary: Update Potion Inventory at ID.
+      tags:
+        - Potion Inventory
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PotionInventory'
+            example:
+              amount: 0
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: Invalid Input
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+
+    delete:
+      summary: Delete Potion Inventory at ID.
+      tags:
+        - Potion Inventory
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: Invalid Input
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    id:
+      in: path
+      name: id
+      schema:
+        type: integer
+        minimum: 1
+      example: 1
+      required: true
+      description: Object ID
+    limit:
+      in: query
+      name: limit
+      schema:
+        type: integer
+        minimum: 1
+      description: The maximum numbers of items to return
+      required: false
+
+  schemas:
+    Potion:
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        potency_id:
+          type: integer
+        type_id:
+          type: integer
+      required:
+        - id
+        - potency_id
+            - type_id
+    PotionPotency:
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        restores:
+          type: integer
+        prefix:
+          type: string
+      required:
+        - id
+        - restores
+
+    PotionTypes:
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        related_stat:
+          type: string
+        color:
+          type: string
+      required:
+        - id
+        - related_stat
+        - color
+
+    PotionInventory:
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        potion_id:
+          type: integer
+        price:
+          type: integer
+        on_sale:
+          type: boolean
+        amount:
+          type: integer
+      required:
+        - id
+        - potion_id
+        - price
+        - on_sale
+        - amount
