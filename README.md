@@ -6,13 +6,58 @@ This project is a simple API written using Python's [Falcon framework](https://f
   * Testing functionalities using pytest
   * Documenting available routes using Swagger UI / Open API
 
-This file contains project requirements and how to build, run, and test the API.
+This file contains a project overview, system requirements, and how to build, run, and test the API.
+
+--------------------------------------------------------------
+## Additional Documentation
 
 For information on the available API routes, view the Swagger UI by going to `localhost:8000/swagger` in a browser after building and running the project.
 
 For information on the table schema used by this project, see [./docs/table_schema.md](./docs/table_schema.md).
 
 For information on generating and using dummy auth tokens for certain requests, see [./docs/auth_token.md](./docs/auth_token.md).
+
+--------------------------------------------------------------
+
+## Potion Shop API Overview
+
+The sample project is a simple Potion Shop Inventory API. You can:
+* Define a new Potion (PotionType and PotionPotency combination)
+* Define a new PotionType (color and which status it affects - for example: "a red potion changes the drinkers' health")
+* Define a new PotionPotency (how strongly it affects the drinker and a word to describe it - for example "a Hi-Potion restores 50% of a status)
+* Track the Inventory of the Potion Shop (how many Potions are available, what their price is, and if there is a sale)
+
+![potion shop table schema diagram](./docs/img/table_schema.png)
+
+For more information about the table schema, see [./docs/table_schema.md](./docs/table_schema.md).
+
+### API Routes
+
+Requests for this API are generally in the format:
+
+Request Type        |  Request Format                       | Sample Request
+------------------- | ------------------------------------- | ------------------------------
+GET / POST          |  {BASE URL}/v1/{TABLE NAME}           | GET localhost:8000/v1/potions
+GET / PUT / DELETE  |  {BASE URL}/v1/{TABLE NAME}/{ITEM ID} | GET localhost:8000/v1/potions/1
+
+#### Route Prefixes
+* Potions: `/potions`
+* PotionTypes: `/potions/types`
+* PotionPotency: `/potions/potency`
+* PotionInventory: `/inventory`
+
+There is also a route to describe Potions in a readable format:
+```
+GET /v1/potions/describe
+GET /v1/potions/describe/{POTION ID}
+```
+If you include an ID for a specific Potion, you will receive a response such as: `The red Hi-Potion restores 50% of the drinker's Health.`
+If you do not include an ID, you will receive a list of descriptions for all defined Potions.
+
+#### Authentication
+Any PUT, POST, or DELETE request will need a valid authentication RS256 OAuth2/JWT token. For information on generating and using dummy auth tokens for certain requests, see [./docs/auth_token.md](./docs/auth_token.md).
+
+For more information on the available API routes, view the Swagger UI by going to `localhost:8000/swagger` in a browser after building and running the project.
 
 --------------------------------------------------------------
 
